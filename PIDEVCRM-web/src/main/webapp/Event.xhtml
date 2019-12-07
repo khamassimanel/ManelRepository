@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:cc="http://java.sun.com/jsf/composite"
+xmlns:c="http://java.sun.com/jsp/jstl/core"
+xmlns:pt="http://java.sun.com/jsf/passthrough"
+xmlns:my="http://java.sun.com/jsf/composite/my"
+template="/template/template.xhtml">
+<ui:param name="page_name" value="Accueil" />
+<ui:define name="content">
+<h:head><h:outputScript library="javax.faces" name="jsf.js" target="head" /></h:head>
+
+<h:panelGroup>
+<h:form>
+<h:outputText value="evenement" /> |
+<h:commandLink value="Déconnexion" action="#{loginBean.doLogout()}" />
+</h:form>
+</h:panelGroup>
+<h:panelGroup columns="2">
+<h:form enctype="multipart/form-data" >
+
+<table>
+<tr><td><h:outputText value="nom"></h:outputText></td> 
+<td><h:inputText value="#{eventBean.nom}"></h:inputText></td></tr>
+<tr><td><h:outputText value="description"></h:outputText></td> 
+<td><h:inputText value="#{eventBean.description}"></h:inputText></td></tr>
+<tr><td><h:outputText value="nbPlaces"></h:outputText></td>
+<td><h:inputText value="#{eventBean.nbPlaces}"></h:inputText></td></tr>
+<tr><td><h:outputText value="price"></h:outputText></td>
+<td><h:inputText value="#{eventBean.price}"></h:inputText></td></tr>
+<tr><td><h:outputText value="date debut"></h:outputText></td>
+<td><h:inputText value="#{eventBean.datedebut}" binding="#{datedebut}"><f:convertDateTime pattern="dd-MM-yyyy"/></h:inputText></td></tr>
+<tr><td><h:outputText value="date fin"></h:outputText></td>
+<td><h:inputText value="#{eventBean.datefin}"><f:convertDateTime pattern="dd-MM-yyyy"/>
+<f:attribute name="startdaitwait" value="#{datedebut}"/>
+<f:validator validatorId="dateValidator"/>
+</h:inputText></td></tr>
+<tr><td><h:outputText value="image"></h:outputText></td>
+<td><h:inputFile type="file" value="#{eventBean.file}"/></td></tr>
+<tr><td colspan="2"> 
+<my:if condition="#{eventBean.datefin.before(eventBean.datedebut)}">
+<f:facet name="then">
+<h:outputText value="date fin doit etre apres date debut"></h:outputText>
+</f:facet>
+</my:if>
+<h:commandButton value="Ajouter Evenement" action="#{eventBean.addEvent()}" /></td></tr>
+<tr><td><h:commandButton value="Mettre A jour Event" 
+     action="#{eventBean.updateEvent() }" /></td></tr>
+</table>
+</h:form>
+</h:panelGroup>
+<h:panelGroup columns="2"> 
+<h:form id="form">
+<h:inputText  id="search">
+ <f:ajax  render="form" event="keyup" listener="#{eventBean.recherche()}"></f:ajax>
+</h:inputText>
+<h:commandButton value="search" actionListener="#{eventBean.recherche()}" >
+<f:ajax  render="form"></f:ajax>
+</h:commandButton>
+
+ <h:dataTable value="#{eventBean.events}" var="event" border="1">
+
+<h:column><f:facet name="header"><h:outputText value="nom" />
+</f:facet> <h:outputText value="#{event.nom}" /> </h:column> 
+<h:column><f:facet name="header"><h:outputText value="description" />
+</f:facet> <h:outputText value="#{event.description}" /> </h:column> 
+<h:column><f:facet name="header"><h:outputText value="nbPlaces" />
+</f:facet> <h:outputText value="#{event.nbPlaces}" /> </h:column> 
+<h:column><f:facet name="header"><h:outputText value="price" />
+</f:facet> <h:outputText value="#{event.price}" /> </h:column> 
+<h:column><f:facet name="header"><h:outputText value="date debut" />
+</f:facet> <h:outputText value="#{event.datedebut}" /> </h:column> 
+<h:column><f:facet name="header"><h:outputText value="date fin" />
+</f:facet> <h:outputText value="#{event.datefin}" /> </h:column> 
+<h:column>
+<f:facet name="header"><h:outputText value="image" /></f:facet> 
+<img src="Images/Events/#{event.imageEvent}" alt="Image" width="200"/></h:column>
+<h:column> <f:facet name="header"><h:outputText value="Action" /></f:facet> 
+<h:commandButton action="#{eventBean.removeEv(event.idEvent)}" value="Supprimer" />
+<h:commandButton action="#{eventBean.displayEvent(event)}" value="Afficher" />
+</h:column>
+</h:dataTable>
+ <c:if test="#{ empty eventBean.events}">
+ <h:outputText 
+ value="No record found!"  />
+ </c:if>
+
+</h:form>
+</h:panelGroup>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:cc="http://java.sun.com/jsf/composite"
+xmlns:my="http://java.sun.com/jsf/composite/my"
+xmlns:c="http://java.sun.com/jsp/jstl/core"
+template="/template/template.xhtml"
+>
+<ui:define name="content">
+<h:panelGroup columns="2">
+<h:form enctype="multipart/form-data" id="formAjax">
+<h:outputText value="Details event" /> 
+<table>
+<tr>
+<td><h:outputText value="nom"></h:outputText></td> 
+<td><h:outputText value="#{eventBean.nom}"></h:outputText></td>
+</tr>
+<tr>
+<td><h:outputText value="description"></h:outputText></td> 
+<td><h:outputText value="#{eventBean.description}"></h:outputText></td>
+</tr>
+<tr>
+<td><h:outputText value="nbPlaces"></h:outputText></td>
+<td><h:outputText value="#{eventBean.nbPlaces}"></h:outputText></td>
+</tr>
+<tr>
+<td><h:outputText value="price"></h:outputText></td>
+<td><h:outputText value="#{eventBean.price}"></h:outputText></td>
+</tr>
+<tr>
+<td><h:outputText value="date debut"></h:outputText></td>
+<td><h:outputText value="#{eventBean.datedebut}"></h:outputText></td>
+</tr>
+<tr>
+<td><h:outputText value="date fin"></h:outputText></td>
+<td><h:outputText value="#{eventBean.datefin}">
+</h:outputText></td>
+</tr>
+<tr><td><h:outputText value="image"></h:outputText></td>
+<td><img src="Images/Events/#{eventBean.image}" alt="Image" width="400" /></td>
+</tr>
+<tr><td><h:outputText value="commentaire"></h:outputText></td> 
+<td><h:inputText value="#{commentBean.content}"></h:inputText></td></tr>
+<tr><td colspan="2"> <h:commandButton value="Ajouter commentaire" action="#{commentBean.addcomment()}" /></td></tr>
+</table>
+<h:panelGroup id="division">
+ <c:if test="#{false eq eventBean.participated}">
+<h:commandButton id="part"  value="participer"   actionListener="#{eventBean.addparticipation(eventBean.eventIdToBeUpdated)}" >
+ <f:ajax    render="formAjax"/>
+</h:commandButton>
+<h:message for="part"></h:message>
+</c:if>
+<c:if test="#{true eq eventBean.participated}">
+<h:commandButton id="delpart"  value="annuler la participation"   
+actionListener="#{eventBean.removeparticipation(eventBean.eventIdToBeUpdated)}" >
+ <f:ajax   render="formAjax" />
+</h:commandButton>
+<h:message for="delpart"></h:message>
+</c:if>
+</h:panelGroup>
+</h:form>
+</h:panelGroup>
+<h:panelGroup columns="2"> 
+<h:form> 
+<h:dataTable value="#{commentBean.comments}" var="comment" border="1"> 
+<h:column><f:facet name="header"><h:outputText value="content" /></f:facet> 
+<h:outputText value="#{comment.content}" /></h:column> 
+<h:column> 
+<f:facet name="header"><h:outputText value="Action" /></f:facet> 
+<h:commandButton action="#{commentBean.removeComment(comment.idCom_event)}" value="Supprimer" />
+<h:commandButton action="#{commentBean.displayComment(comment)}" value="Afficher" />
+
+</h:column>
+</h:dataTable>
+</h:form>
+</h:panelGroup>
+
+</ui:define>
+</ui:composition>
